@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponseException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -30,5 +31,18 @@ public class UserService {
         }
         return users.stream().map(user -> UserMapper.entityToDTO(user)).toList();
     }
+    public Optional<UserDTOResponse> updateUser(int id, UserDTORequest userDTORequest) {
+        return userRepository.findById(id)
+                .map(existingUser -> {
+                    existingUser.setName(userDTORequest.name());
+                    existingUser.setSurname(userDTORequest.surname());
+                    existingUser.setEmail(userDTORequest.email());
+                    existingUser.setPassword(userDTORequest.password());
+                    User updatedUser =userRepository.save(existingUser);
+                    return UserMapper.entityToDTO(updatedUser);
+                });
+    }
+
 
 }
+

@@ -1,6 +1,8 @@
 package com.factoria.proyecto_final_ecom_fs.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import javax.annotation.processing.Generated;
 
@@ -22,6 +24,8 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
+
 
     public String getId() {
         return id;

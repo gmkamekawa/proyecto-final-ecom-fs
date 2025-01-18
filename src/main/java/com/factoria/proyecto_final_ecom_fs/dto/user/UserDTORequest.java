@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record UserDTORequest(
+        Integer id,
         @NotBlank(message = "Name is required")
         String name,
         @NotBlank(message = "Surname is required")
@@ -13,5 +14,5 @@ public record UserDTORequest(
         String email,
         @NotBlank(message = "Password is required")
         String password
-) {}
-
+) {
+}
