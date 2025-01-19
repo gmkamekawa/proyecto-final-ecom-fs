@@ -1,4 +1,7 @@
 package com.factoria.proyecto_final_ecom_fs.repository;
 
-public class ProductRepository {
+import com.factoria.proyecto_final_ecom_fs.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Integer> {
 }
