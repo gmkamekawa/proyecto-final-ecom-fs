@@ -12,27 +12,27 @@ public class Product {
     @Column(unique=true, nullable=false)
     private String name;
 
-    @Column(length=400, nullable=false)
-    private String description;
-
     @Column(nullable=false)
     private float price;
-
-    @Column(nullable=false)
-    private boolean feature;
 
     @Column(unique=true, nullable=false)
     private String url_image;
 
+    @Column(nullable=false)
+    private boolean feature;
+
+    @Column(length=400, nullable=false)
+    private String description;
+
     public Product() {
     }
 
-    public Product(String name, String description, float price, boolean feature, String url_image) {
+    public Product(String name, float price, String url_image, boolean feature, String description) {
         this.name = name;
-        this.description = description;
         this.price = price;
-        this.feature = feature;
         this.url_image = url_image;
+        this.feature = feature;
+        this.description = description;
     }
 
     public int getId() {
@@ -51,20 +51,20 @@ public class Product {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public float getPrice() {
         return price;
     }
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public String getUrl_image() {
+        return url_image;
+    }
+
+    public void setUrl_image(String url_image) {
+        this.url_image = url_image;
     }
 
     public boolean isFeature() {
@@ -75,11 +75,11 @@ public class Product {
         this.feature = feature;
     }
 
-    public String getUrl_image() {
-        return url_image;
+    public String getDescription() {
+        return description;
     }
 
-    public void setUrl_image(String url_image) {
-        this.url_image = url_image;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

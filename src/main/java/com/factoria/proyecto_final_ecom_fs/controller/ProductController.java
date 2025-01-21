@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
 
@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     //Update
-    @PutMapping("/id={id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProductDTOResponse> updateProduct(@PathVariable int id, @RequestBody Product updatedProduct) {
         try {
             ProductDTOResponse product = productService.editProduct(id, updatedProduct);
@@ -45,7 +45,7 @@ public class ProductController {
     }
 
     //Delete
-    @DeleteMapping("/id={id}")
+    @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
     }

@@ -37,13 +37,13 @@ public class ProductService {
         Optional<Product> foundProduct = productRepository.findById(id);
 
         if (foundProduct.isPresent()) {
-            Product existingProduct= foundProduct.get();
+            Product existingProduct = foundProduct.get();
 
             existingProduct.setName(updatedProduct.getName());
-            existingProduct.setDescription(updatedProduct.getDescription());
             existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setFeature(updatedProduct.isFeature());
             existingProduct.setUrl_image(updatedProduct.getUrl_image());
+            existingProduct.setFeature(updatedProduct.isFeature());
+            existingProduct.setDescription(updatedProduct.getDescription());
 
             Product savedProduct = productRepository.save(existingProduct);
 
@@ -55,6 +55,8 @@ public class ProductService {
 
     //Delete
     public void deleteProduct(int id) {
+        if (!productRepository.existsById(id)) throw new RuntimeException("Product with ID " + id + " not found");
+
         productRepository.deleteById(id);
     }
 }
