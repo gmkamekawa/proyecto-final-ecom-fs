@@ -1,4 +1,14 @@
 package com.factoria.proyecto_final_ecom_fs.dto.category;
 
-public record CategoryDTORequest() {
-}
+import jakarta.validation.constraints.NotBlank;
+
+
+public record CategoryDTORequest(
+        Integer id,
+        @NotBlank(message = "Name is required")
+        String name
+)
+
+        {
+
+        }
