@@ -2,7 +2,6 @@ package com.factoria.proyecto_final_ecom_fs.controller;
 
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTOResponse;
-import com.factoria.proyecto_final_ecom_fs.model.Product;
 import com.factoria.proyecto_final_ecom_fs.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,33 +19,33 @@ public class ProductController {
         this.productService = productService;
     }
 
-    //CRUD
-    //Create
+
     @PostMapping
-    public ResponseEntity<ProductDTOResponse> saveProduct(@Valid @RequestBody ProductDTORequest pRequest) {
-        return new  ResponseEntity<>(productService.saveProduct(pRequest), HttpStatus.CREATED);
+    public ResponseEntity<ProductDTOResponse> saveProduct(@Valid @RequestBody ProductDTORequest productDTORequest) {
+        ProductDTOResponse newProductResponse = productService.saveProduct(productDTORequest);
+        return new ResponseEntity<>(newProductResponse, HttpStatus.CREATED);
     }
 
-    //Read
+
     @GetMapping
     public ResponseEntity<List<ProductDTOResponse>> getProducts() {
         return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
     }
 
-    //Update
+
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTOResponse> updateProduct(@PathVariable int id, @RequestBody Product updatedProduct) {
-        try {
-            ProductDTOResponse product = productService.editProduct(id, updatedProduct);
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ProductDTOResponse> updateProduct(
+            @PathVariable int id,
+            @Valid @RequestBody ProductDTORequest productDTORequest) {
+
+        return productService.updateProduct(id, productDTORequest)
+                .map(updatedProduct -> new ResponseEntity<>(updatedProduct, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    //Delete
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable int id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

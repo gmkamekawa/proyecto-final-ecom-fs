@@ -1,12 +1,10 @@
 package com.factoria.proyecto_final_ecom_fs.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-
-import javax.annotation.processing.Generated;
 
 @Entity
+@Table(name = "user")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

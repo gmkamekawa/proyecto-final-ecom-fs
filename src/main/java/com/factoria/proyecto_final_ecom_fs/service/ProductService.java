@@ -1,5 +1,6 @@
 package com.factoria.proyecto_final_ecom_fs.service;
 
+
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTOResponse;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductMapper;
@@ -18,45 +19,32 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    //CRUD
-    //Create
-    public ProductDTOResponse saveProduct(ProductDTORequest pRequest) {
-        Product newProduct = ProductMapper.dtoToEntity(pRequest);
+
+    public ProductDTOResponse saveProduct(ProductDTORequest productDTORequest) {
+        Product newProduct = ProductMapper.dtoToEntity(productDTORequest);
         Product savedProduct = productRepository.save(newProduct);
         return ProductMapper.entityToDTO(savedProduct);
     }
 
-    //Read
     public List<ProductDTOResponse> getProducts() {
         List<Product> products = productRepository.findAll();
         return products.stream().map(product -> ProductMapper.entityToDTO(product)).toList();
     }
 
-    //Edit
-    public ProductDTOResponse editProduct(int id, Product updatedProduct) {
-        Optional<Product> foundProduct = productRepository.findById(id);
+    public Optional<ProductDTOResponse> updateProduct(int id, ProductDTORequest productDTORequest) {
+        return productRepository.findById(id).map(existingProduct -> {
+            existingProduct.setName(productDTORequest.name());
+            Product updatedProduct = productRepository.save(existingProduct);
+            return ProductMapper.entityToDTO(updatedProduct);
+        });
+    }
 
-        if (foundProduct.isPresent()) {
-            Product existingProduct = foundProduct.get();
 
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setUrl_image(updatedProduct.getUrl_image());
-            existingProduct.setFeature(updatedProduct.isFeature());
-            existingProduct.setDescription(updatedProduct.getDescription());
 
-            Product savedProduct = productRepository.save(existingProduct);
-
-            return ProductMapper.entityToDTO(savedProduct);
+        public void deleteProduct(int id) {
+            if (!productRepository.existsById(id)) {
+                throw new RuntimeException("Product with ID " + id + " not found");
+            }
+            productRepository.deleteById(id);
         }
-
-        throw new RuntimeException("Product not found with id: " + id);
-    }
-
-    //Delete
-    public void deleteProduct(int id) {
-        if (!productRepository.existsById(id)) throw new RuntimeException("Product with ID " + id + " not found");
-
-        productRepository.deleteById(id);
-    }
 }

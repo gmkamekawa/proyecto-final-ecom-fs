@@ -3,7 +3,7 @@ package com.factoria.proyecto_final_ecom_fs.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
