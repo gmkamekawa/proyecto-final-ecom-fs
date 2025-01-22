@@ -8,6 +8,6 @@ public class ProductMapper {
     }
 
     public static ProductDTOResponse entityToDTO(Product product) {
-        return new ProductDTOResponse(product.getName(), product.getPrice(), product.getUrl_image(), product.isFeature(), product.getDescription());
+        return new ProductDTOResponse(product.getId(),product.getName(), product.getPrice(), product.getUrl_image(), product.isFeature(), product.getDescription());
     }
 }
