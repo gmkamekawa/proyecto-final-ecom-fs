@@ -34,6 +34,7 @@ public class ProductService {
     public Optional<ProductDTOResponse> updateProduct(int id, ProductDTORequest productDTORequest) {
         return productRepository.findById(id).map(existingProduct -> {
             existingProduct.setName(productDTORequest.name());
+            existingProduct.setFeatured(productDTORequest.featured());
             Product updatedProduct = productRepository.save(existingProduct);
             return ProductMapper.entityToDTO(updatedProduct);
         });

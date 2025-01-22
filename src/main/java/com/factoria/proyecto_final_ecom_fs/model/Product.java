@@ -19,7 +19,7 @@ public class Product {
     private String url_image;
 
     @Column(nullable=false)
-    private boolean feature;
+    private boolean featured;
 
     @Column(length=400, nullable=false)
     private String description;
@@ -27,11 +27,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, float price, String url_image, boolean feature, String description) {
+    public Product(String name, float price, String url_image, boolean featured, String description) {
         this.name = name;
         this.price = price;
         this.url_image = url_image;
-        this.feature = feature;
+        this.featured = featured;
         this.description = description;
     }
 
@@ -67,12 +67,12 @@ public class Product {
         this.url_image = url_image;
     }
 
-    public boolean isFeature() {
-        return feature;
+    public boolean isFeatured() {
+        return featured;
     }
 
-    public void setFeature(boolean feature) {
-        this.feature = feature;
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
     }
 
     public String getDescription() {
@@ -82,4 +82,6 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
+
+
 }

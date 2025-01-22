@@ -5,7 +5,7 @@ public record ProductDTOResponse(
         String name,
         float price,
         String url_image,
-        boolean feature,
+        boolean featured,
         String description
 ) {
 }
