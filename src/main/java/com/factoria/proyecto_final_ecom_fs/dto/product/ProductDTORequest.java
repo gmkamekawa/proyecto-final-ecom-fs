@@ -10,14 +10,15 @@ public record ProductDTORequest(
         @NotNull(message = "Price is required")
         float price,
 //        @URL(
-//                protocol = "https",
+//                protocol = "http",
 //                host = "xxxxxxxxx",
 //                message = "The image URL is not correct"
 //        )
         String url_image,
         @NotNull(message = "This field must be true or false")
-        boolean feature,
+        boolean featured,
         @NotBlank(message = "Description is required")
         String description
+
 ) {
 }
