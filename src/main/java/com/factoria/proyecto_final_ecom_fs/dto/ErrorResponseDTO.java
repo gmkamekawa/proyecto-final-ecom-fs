@@ -4,3 +4,4 @@ public class ErrorResponseDTO {
     public ErrorResponseDTO(String message, int value) {
     }
 }
+
