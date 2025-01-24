@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
 
 public record ProductDTORequest(
-        @NotBlank(message = "Name is required")
+        @NotBlank
         String name,
-        @NotNull(message = "Price is required")
+        @NotNull
         float price,
 //        @URL(
 //                protocol = "http",
@@ -15,9 +15,9 @@ public record ProductDTORequest(
 //                message = "The image URL is not correct"
 //        )
         String url_image,
-        @NotNull(message = "This field must be true or false")
+        @NotNull
         boolean featured,
-        @NotBlank(message = "Description is required")
+        @NotBlank
         String description
 
 ) {
