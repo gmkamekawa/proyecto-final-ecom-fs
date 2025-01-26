@@ -9,11 +9,7 @@ public record ProductDTORequest(
         String name,
         @NotNull
         float price,
-//        @URL(
-//                protocol = "http",
-//                host = "xxxxxxxxx",
-//                message = "The image URL is not correct"
-//        )
+        @URL
         String url_image,
         @NotNull
         boolean featured,
