@@ -19,19 +19,16 @@ public class ProductController {
         this.productService = productService;
     }
 
-
     @PostMapping
     public ResponseEntity<ProductDTOResponse> saveProduct(@Valid @RequestBody ProductDTORequest productDTORequest) {
         ProductDTOResponse newProductResponse = productService.saveProduct(productDTORequest);
         return new ResponseEntity<>(newProductResponse, HttpStatus.CREATED);
     }
 
-
     @GetMapping
     public ResponseEntity<List<ProductDTOResponse>> getProducts() {
         return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTOResponse> updateProduct(
