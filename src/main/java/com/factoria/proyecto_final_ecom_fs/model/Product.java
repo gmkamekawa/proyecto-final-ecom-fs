@@ -15,13 +15,13 @@ public class Product {
     @Column(nullable=false)
     private float price;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique=true)
     private String url_image;
 
-    @Column(nullable=false)
+    @Column
     private boolean featured;
 
-    @Column(length=400, nullable=false)
+    @Column(length=400)
     private String description;
 
     public Product() {
