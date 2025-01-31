@@ -1,5 +1,6 @@
 package com.factoria.proyecto_final_ecom_fs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -18,7 +19,6 @@ public class User {
     private String email;
     private String password;
     @ManyToMany(mappedBy = "users")
-    @JsonManagedReference
     private List<Product> products = new ArrayList<>();
 
     public User() {

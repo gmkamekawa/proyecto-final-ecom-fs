@@ -40,7 +40,6 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonBackReference
     private List<User> users = new ArrayList<>();
 
     public Product() {

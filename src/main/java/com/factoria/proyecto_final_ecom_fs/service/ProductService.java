@@ -1,6 +1,5 @@
 package com.factoria.proyecto_final_ecom_fs.service;
 
-
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTOResponse;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductMapper;
@@ -33,7 +32,7 @@ public class ProductService {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
 
         if (optionalCategory.isPresent()) {
-            Category category =optionalCategory.get();
+            Category category = optionalCategory.get();
             newProduct.setCategory(category);
 
             return productRepository.save(newProduct);
@@ -73,5 +72,9 @@ public class ProductService {
 
     public List<User> findProductByIds(List<Integer> userIds) {
         return userRepository.findByIdIn(userIds);
+    }
+
+    public Optional<Product> findById(int productId) {
+        return productRepository.findById(productId);
     }
 }
