@@ -4,7 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
 
-public record ProductDTORequest(
+import java.util.List;
+
+public record ProductDTORequest (
         @NotBlank
         String name,
         @NotNull
@@ -14,7 +16,8 @@ public record ProductDTORequest(
         @NotNull
         boolean featured,
         @NotBlank
-        String description
-
+        String description,
+        int category_Id,
+        List<Integer> users_Id
 ) {
 }

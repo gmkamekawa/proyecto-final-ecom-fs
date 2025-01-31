@@ -1,7 +1,12 @@
 package com.factoria.proyecto_final_ecom_fs.dto.category;
 
-public record CategoryDTOResponse(
+import com.factoria.proyecto_final_ecom_fs.model.Product;
+
+import java.util.List;
+
+public record CategoryDTOResponse (
         int id,
-        String name
+        String name,
+        List<Product> products
 ) {
 }
