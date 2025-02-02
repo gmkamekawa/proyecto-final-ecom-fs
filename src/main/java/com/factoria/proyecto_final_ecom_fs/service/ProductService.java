@@ -74,4 +74,12 @@ public class ProductService {
     public List<User> findProductByIds(List<Integer> userIds) {
         return userRepository.findByIdIn(userIds);
     }
+
+    public Optional<ProductDTOResponse> getProductById(int id) {
+        return productRepository.findById(id)
+                .map(ProductMapper::entityToDTO);
+    }
+
+
+
 }

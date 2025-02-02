@@ -52,6 +52,16 @@ public class ProductController {
     public ResponseEntity<List<ProductDTOResponse>> getProducts() {
         return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDTOResponse> getProductById(@PathVariable int id) {
+        Optional<ProductDTOResponse> product = productService.getProductById(id);
+
+        if (product.isPresent()) {
+            return new ResponseEntity<>(product.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTOResponse> updateProduct(@PathVariable int id, @Valid @RequestBody ProductDTORequest productDTORequest) {
