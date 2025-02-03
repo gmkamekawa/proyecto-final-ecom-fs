@@ -49,7 +49,6 @@ public class ProductController {
 
             return new ResponseEntity<>(newProductDTO, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Manejo de error
             throw new RuntimeException("Invalid product data: " + e.getMessage());
         }
     }
@@ -78,10 +77,10 @@ public class ProductController {
 
             if (optionalCategory.isEmpty())
                 throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
-            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty())
-                throw new ObjectNotFoundException("User", productDTORequest.users_Id());
+            Set<User> users = (productDTORequest.users_Id() != null && !productDTORequest.users_Id().isEmpty())
+                    ? userService.findUsersByIds(productDTORequest.users_Id())
+                    : Collections.emptySet();
 
-            Set<User> users = userService.findUsersByIds(productDTORequest.users_Id());
 
             return productService.updateProduct(id, productDTORequest, optionalCategory.get(), users)
                     .map(updatedProduct -> new ResponseEntity<>(updatedProduct, HttpStatus.OK))
