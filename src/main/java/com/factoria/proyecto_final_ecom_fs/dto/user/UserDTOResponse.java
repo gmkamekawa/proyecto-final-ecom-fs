@@ -10,6 +10,6 @@ public record UserDTOResponse(
         String surname,
         String email,
         String password,
-        List<Product> products
+        List<String> products
 ) {
 }

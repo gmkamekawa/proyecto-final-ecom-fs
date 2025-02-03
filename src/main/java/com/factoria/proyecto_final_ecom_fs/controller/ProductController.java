@@ -3,11 +3,14 @@ package com.factoria.proyecto_final_ecom_fs.controller;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTOResponse;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductMapper;
+import com.factoria.proyecto_final_ecom_fs.dto.user.UserDTOResponse;
+import com.factoria.proyecto_final_ecom_fs.dto.user.UserMapper;
 import com.factoria.proyecto_final_ecom_fs.model.Category;
 import com.factoria.proyecto_final_ecom_fs.model.Product;
 import com.factoria.proyecto_final_ecom_fs.model.User;
 import com.factoria.proyecto_final_ecom_fs.service.CategoryService;
 import com.factoria.proyecto_final_ecom_fs.service.ProductService;
+import com.factoria.proyecto_final_ecom_fs.service.UserService;
 import jakarta.validation.Valid;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -15,17 +18,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final UserService userService;
 
-    public ProductController(ProductService productService, CategoryService categoryService) {
+    public ProductController(ProductService productService, CategoryService categoryService, UserService userService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -33,10 +40,12 @@ public class ProductController {
         try {
             Optional<Category> optionalCategory = categoryService.findCategory(productDTORequest.category_Id());
 
-            if (optionalCategory.isEmpty()) throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
-            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty()) throw new ObjectNotFoundException("User", productDTORequest.users_Id());
+            if (optionalCategory.isEmpty())
+                throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
+            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty())
+                throw new ObjectNotFoundException("User", productDTORequest.users_Id());
 
-            List<User> users = productService.findProductByIds(productDTORequest.users_Id());
+            Set<User> users = userService.findUsersByIds(productDTORequest.users_Id());
 
             Product newProduct = ProductMapper.dtoToEntity(productDTORequest, optionalCategory.get(), users);
             Product createdProduct = productService.saveProduct(newProduct);
@@ -58,10 +67,12 @@ public class ProductController {
         try {
             Optional<Category> optionalCategory = categoryService.findCategory(productDTORequest.category_Id());
 
-            if (optionalCategory.isEmpty()) throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
-            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty()) throw new ObjectNotFoundException("User", productDTORequest.users_Id());
+            if (optionalCategory.isEmpty())
+                throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
+            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty())
+                throw new ObjectNotFoundException("User", productDTORequest.users_Id());
 
-            List<User> users = productService.findProductByIds(productDTORequest.users_Id());
+            Set<User> users = userService.findUsersByIds(productDTORequest.users_Id());
 
             return productService.updateProduct(id, productDTORequest, optionalCategory.get(), users)
                     .map(updatedProduct -> new ResponseEntity<>(updatedProduct, HttpStatus.OK))
@@ -75,5 +86,21 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/user/{id}")
+    public ResponseEntity<?> addProductToUser(@PathVariable int id, @RequestBody Map<String, Set<Integer>> request) {
+        Set<Integer> userIds = request.get("products");
+        productService.addProductsToUser(id, userIds);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<?> removeProductsToUser(@PathVariable int id, @RequestBody Map<String, Set<Integer>> request) {
+        Set<Integer> userIds = request.get("products");
+        productService.removeProductsToUser(id, userIds);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

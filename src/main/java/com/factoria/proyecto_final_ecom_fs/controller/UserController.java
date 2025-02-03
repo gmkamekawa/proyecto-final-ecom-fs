@@ -1,6 +1,5 @@
 package com.factoria.proyecto_final_ecom_fs.controller;
 
-import com.factoria.proyecto_final_ecom_fs.dto.product.ProductMapper;
 import com.factoria.proyecto_final_ecom_fs.dto.user.UserDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.user.UserDTOResponse;
 import com.factoria.proyecto_final_ecom_fs.dto.user.UserMapper;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -31,10 +31,15 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDTOResponse> saveUser(@Valid @RequestBody UserDTORequest userDTORequest) {
-        User newUser = UserMapper.dtoToEntity(userDTORequest);
-        UserDTOResponse newUserResponse = userService.saveUser(newUser);
+        if (userDTORequest.products_Id() == null || userDTORequest.products_Id().isEmpty()) throw new ObjectNotFoundException("User", userDTORequest.products_Id());
 
-        return new ResponseEntity<>(newUserResponse, HttpStatus.CREATED);
+        Set<Product> products = productService.findProductsByIds(userDTORequest.products_Id());
+
+        User newUser = UserMapper.dtoToEntity(userDTORequest, products);
+        User createdUser = userService.saveUser(newUser);
+        UserDTOResponse newUserDTO = UserMapper.entityToDTO(createdUser);
+
+        return new ResponseEntity<>(newUserDTO, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -44,9 +49,18 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTOResponse> updateUser(@PathVariable int id, @Valid @RequestBody UserDTORequest userDTORequest) {
-        return userService.updateUser(id, userDTORequest)
-                .map(updatedUser -> new ResponseEntity<>(updatedUser, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            if (userDTORequest.products_Id() == null || userDTORequest.products_Id().isEmpty()) throw new ObjectNotFoundException("Products", userDTORequest.products_Id());
+
+            Set<Product> products = productService.findProductsByIds(userDTORequest.products_Id());
+
+            return userService.updateUser(id, userDTORequest, products)
+                    .map(updatedUser -> new ResponseEntity<>(updatedUser, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid product data: " + e.getMessage());
+        }
+
     }
 
     @DeleteMapping("/{id}")
@@ -56,33 +70,21 @@ public class UserController {
     }
 
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<Product>> getUserProducts(@PathVariable int id) {
+    public ResponseEntity<Set<Product>> getUserProducts(@PathVariable int id) {
         Optional<User> user = userService.findById(id);
 
         return user.map(value -> ResponseEntity.ok(value.getProducts())).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PutMapping("/{userId}/products/{productId}")
-    public ResponseEntity<UserDTOResponse> removeProductFromUser (@PathVariable int userId, @PathVariable int productId) {
-        try {
-            Optional<User> user = userService.findById(userId);
-            Optional<Product> product = productService.findById(productId);
+    @PostMapping("/{id}/product")
+    public ResponseEntity<UserDTOResponse> addProductToUser(@PathVariable int id, @RequestBody Set<Integer> productsIds) {
+        UserDTOResponse userDTOResponse = userService.addProductsToUser(id, productsIds);
+        return new ResponseEntity<>(userDTOResponse, HttpStatus.OK);
+    }
 
-            if (user.isEmpty()) throw new ObjectNotFoundException("User", userId);
-            if (product.isEmpty()) throw new ObjectNotFoundException("Product", productId);
-
-            User existingUser = user.get();
-            Product existingProduct = product.get();
-
-            existingUser.getProducts().remove(product.get());
-            existingProduct.getUsers().remove(user.get());
-
-            UserDTOResponse userResponse = userService.saveUser(existingUser);
-            productService.saveProduct(existingProduct);
-
-            return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid id data: " + e.getMessage());
-        }
+    @DeleteMapping("/{id}/product")
+    public ResponseEntity<UserDTOResponse> removeProductToUser(@PathVariable int id, @RequestBody Set<Integer> productsIds) {
+        UserDTOResponse userDTOResponse = userService.removeProductToUser(id, productsIds);
+        return new ResponseEntity<>(userDTOResponse, HttpStatus.OK);
     }
 }

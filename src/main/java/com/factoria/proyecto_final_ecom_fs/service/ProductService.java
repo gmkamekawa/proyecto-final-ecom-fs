@@ -3,16 +3,23 @@ package com.factoria.proyecto_final_ecom_fs.service;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTOResponse;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductMapper;
+import com.factoria.proyecto_final_ecom_fs.dto.user.UserDTOResponse;
+import com.factoria.proyecto_final_ecom_fs.dto.user.UserMapper;
+import com.factoria.proyecto_final_ecom_fs.exception.admin.EntityNotFoundException;
 import com.factoria.proyecto_final_ecom_fs.model.Category;
 import com.factoria.proyecto_final_ecom_fs.model.Product;
 import com.factoria.proyecto_final_ecom_fs.model.User;
 import com.factoria.proyecto_final_ecom_fs.repository.CategoryRepository;
 import com.factoria.proyecto_final_ecom_fs.repository.ProductRepository;
 import com.factoria.proyecto_final_ecom_fs.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -43,10 +50,10 @@ public class ProductService {
 
     public List<ProductDTOResponse> getProducts() {
         List<Product> products = productRepository.findAll();
-        return products.stream().map(product -> ProductMapper.entityToDTO(product)).toList();
+        return products.stream().map(ProductMapper::entityToDTO).toList();
     }
 
-    public Optional<ProductDTOResponse> updateProduct(int id, ProductDTORequest productDTORequest, Category category, List<User> users) {
+    public Optional<ProductDTOResponse> updateProduct(int id, ProductDTORequest productDTORequest, Category category, Set<User> users) {
         return productRepository.findById(id).map(existingProduct -> {
             existingProduct.setName(productDTORequest.name());
             existingProduct.setPrice(productDTORequest.price());
@@ -70,11 +77,25 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public List<User> findProductByIds(List<Integer> userIds) {
-        return userRepository.findByIdIn(userIds);
+    public Set<Product> findProductsByIds(List<Integer> productsIds) {
+        return productRepository.findByIdIn(productsIds);
     }
 
-    public Optional<Product> findById(int productId) {
-        return productRepository.findById(productId);
+    public Optional<Product> findById(int id) {
+        return productRepository.findById(id);
+    }
+
+    public void addProductsToUser(int id, Set<Integer> userIds) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        List<Product> products = productRepository.findAllById(userIds);
+        user.getProducts().addAll(products);
+        userRepository.save(user);
+    }
+
+    public void removeProductsToUser(int id, Set<Integer> userIds) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        List<Product> products = productRepository.findAllById(userIds);
+        products.forEach(user.getProducts()::remove);
+        userRepository.save(user);
     }
 }

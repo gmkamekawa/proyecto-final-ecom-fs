@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
@@ -34,17 +35,11 @@ public class Product {
     @JsonIgnore
     private Category category;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_mapping",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users = new ArrayList<>();
+    @ManyToMany(mappedBy = "products")
+    private Set<User> users;
 
     public Product() {
     }
-
     public Product(String name, float price, String url_image, boolean featured, String description, Category category) {
         this.name = name;
         this.price = price;
@@ -110,11 +105,11 @@ public class Product {
         this.category = category;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 }
