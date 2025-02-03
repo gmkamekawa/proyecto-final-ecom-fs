@@ -1,10 +1,9 @@
 package com.factoria.proyecto_final_ecom_fs.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -17,13 +16,17 @@ public class User {
     @Column(unique=true, nullable=false)
     private String email;
     private String password;
-    @ManyToMany(mappedBy = "users")
-    @JsonManagedReference
-    private List<Product> products = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name="cart",
+            joinColumns = @JoinColumn(name = "productUser_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id")
+    )
+    private Set<Product> products;
 
     public User() {
     }
-    public User(String name, String surname, String email, String password){
+    public User(String name, String surname, String email, String password) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -70,11 +73,11 @@ public class User {
         this.password = password;
     }
 
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
 }
