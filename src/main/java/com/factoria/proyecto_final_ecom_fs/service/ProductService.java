@@ -98,4 +98,12 @@ public class ProductService {
         products.forEach(user.getProducts()::remove);
         userRepository.save(user);
     }
+
+    public Optional<ProductDTOResponse> getProductById(int id) {
+        return productRepository.findById(id)
+                .map(ProductMapper::entityToDTO);
+    }
+
+
+
 }
