@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Service
 public class CategoryService {
+
     private final CategoryRepository categoryRepository;
 
     public CategoryService(CategoryRepository categoryRepository) {
@@ -20,7 +21,7 @@ public class CategoryService {
     }
 
     public CategoryDTOResponse saveCategory(CategoryDTORequest categoryDTORequest) {
-        Category newCategory = CategoryMapper.dtoToEntity (categoryDTORequest);
+        Category newCategory = CategoryMapper.dtoToEntity(categoryDTORequest);
         Category savedCategory = categoryRepository.save(newCategory);
 
         return CategoryMapper.entityToDTO(savedCategory);
@@ -32,14 +33,15 @@ public class CategoryService {
             throw new RuntimeException("No categories found");
         }
 
-        return categories.stream().map(category -> CategoryMapper.entityToDTO(category)).toList();
+        return categories.stream()
+                .map(CategoryMapper::entityToDTO)
+                .toList();
     }
 
     public Optional<CategoryDTOResponse> updateCategory(int id, CategoryDTORequest categoryDTORequest) {
         return categoryRepository.findById(id).map(existingCategory -> {
             existingCategory.setName(categoryDTORequest.name());
             Category updatedCategory = categoryRepository.save(existingCategory);
-
             return CategoryMapper.entityToDTO(updatedCategory);
         });
     }
@@ -52,8 +54,8 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
+    // Método para buscar una categoría por ID
     public Optional<Category> findCategory(@NotNull int categoryId) {
-        return categoryRepository.findById(categoryId);
+        return categoryRepository.findById(categoryId);  // Ya está correctamente implementado
     }
 }
-

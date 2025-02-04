@@ -3,8 +3,6 @@ package com.factoria.proyecto_final_ecom_fs.controller;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTORequest;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductDTOResponse;
 import com.factoria.proyecto_final_ecom_fs.dto.product.ProductMapper;
-import com.factoria.proyecto_final_ecom_fs.dto.user.UserDTOResponse;
-import com.factoria.proyecto_final_ecom_fs.dto.user.UserMapper;
 import com.factoria.proyecto_final_ecom_fs.model.Category;
 import com.factoria.proyecto_final_ecom_fs.model.Product;
 import com.factoria.proyecto_final_ecom_fs.model.User;
@@ -17,10 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/product")
@@ -42,13 +37,14 @@ public class ProductController {
 
             if (optionalCategory.isEmpty())
                 throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
-            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty())
-                throw new ObjectNotFoundException("User", productDTORequest.users_Id());
 
-            Set<User> users = userService.findUsersByIds(productDTORequest.users_Id());
+            Set<User> users = (productDTORequest.users_Id() != null && !productDTORequest.users_Id().isEmpty())
+                    ? userService.findUsersByIds(productDTORequest.users_Id())
+                    : Collections.emptySet();
 
             Product newProduct = ProductMapper.dtoToEntity(productDTORequest, optionalCategory.get(), users);
             Product createdProduct = productService.saveProduct(newProduct);
+
             ProductDTOResponse newProductDTO = ProductMapper.entityToDTO(createdProduct);
 
             return new ResponseEntity<>(newProductDTO, HttpStatus.CREATED);
@@ -56,6 +52,8 @@ public class ProductController {
             throw new RuntimeException("Invalid product data: " + e.getMessage());
         }
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<ProductDTOResponse>> getProducts() {
@@ -79,10 +77,10 @@ public class ProductController {
 
             if (optionalCategory.isEmpty())
                 throw new ObjectNotFoundException("Category", productDTORequest.category_Id());
-            if (productDTORequest.users_Id() == null || productDTORequest.users_Id().isEmpty())
-                throw new ObjectNotFoundException("User", productDTORequest.users_Id());
+            Set<User> users = (productDTORequest.users_Id() != null && !productDTORequest.users_Id().isEmpty())
+                    ? userService.findUsersByIds(productDTORequest.users_Id())
+                    : Collections.emptySet();
 
-            Set<User> users = userService.findUsersByIds(productDTORequest.users_Id());
 
             return productService.updateProduct(id, productDTORequest, optionalCategory.get(), users)
                     .map(updatedProduct -> new ResponseEntity<>(updatedProduct, HttpStatus.OK))
