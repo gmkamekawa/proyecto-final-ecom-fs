@@ -61,11 +61,9 @@ public class ProductController {
     public ResponseEntity<ProductDTOResponse> getProductById(@PathVariable int id) {
         Optional<ProductDTOResponse> product = productService.getProductById(id);
 
-        if (product.isPresent()) {
-            return new ResponseEntity<>(product.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return product.map(productDTOResponse
+                -> new ResponseEntity<>(productDTOResponse, HttpStatus.OK)).orElseGet(()
+                -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
@@ -122,9 +120,16 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/price/range") //product/price/range?minPrice=10.0&maxPrice=50.0
+    @GetMapping("/price/range")
     public ResponseEntity<List<Product>> getProductsByPriceRange(@RequestParam float minPrice, @RequestParam float maxPrice) {
+        if (minPrice < 0 || maxPrice < 0 || minPrice > maxPrice)
+            return ResponseEntity.badRequest().body(null);
+
         List<Product> products = productService.getProductsByPriceRange(minPrice, maxPrice);
+
+        if (products.isEmpty())
+            return ResponseEntity.noContent().build();
+
         return ResponseEntity.ok(products);
     }
 }

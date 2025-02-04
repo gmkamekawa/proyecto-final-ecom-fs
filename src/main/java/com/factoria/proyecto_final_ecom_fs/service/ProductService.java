@@ -70,9 +70,8 @@ public class ProductService {
     }
 
     public void deleteProduct(int id) {
-        if (!productRepository.existsById(id)) {
+        if (!productRepository.existsById(id))
             throw new RuntimeException("Product with ID " + id + " not found");
-        }
 
         productRepository.deleteById(id);
     }
