@@ -53,8 +53,6 @@ public class ProductController {
         }
     }
 
-
-
     @GetMapping
     public ResponseEntity<List<ProductDTOResponse>> getProducts() {
         return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
@@ -110,5 +108,23 @@ public class ProductController {
         productService.removeProductsToUser(id, userIds);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable int categoryId) {
+        Optional<Category> optionalCategory = categoryService.findCategory(categoryId);
+
+        if (optionalCategory.isPresent()) {
+            List<Product> products = productService.getProductsByCategory(optionalCategory.get());
+            return ResponseEntity.ok(products);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/price/range") //product/price/range?minPrice=10.0&maxPrice=50.0
+    public ResponseEntity<List<Product>> getProductsByPriceRange(@RequestParam float minPrice, @RequestParam float maxPrice) {
+        List<Product> products = productService.getProductsByPriceRange(minPrice, maxPrice);
+        return ResponseEntity.ok(products);
     }
 }

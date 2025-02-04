@@ -54,8 +54,7 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    // Método para buscar una categoría por ID
     public Optional<Category> findCategory(@NotNull int categoryId) {
-        return categoryRepository.findById(categoryId);  // Ya está correctamente implementado
+        return categoryRepository.findById(categoryId);
     }
 }

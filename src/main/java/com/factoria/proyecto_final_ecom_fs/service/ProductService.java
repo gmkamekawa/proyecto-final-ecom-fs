@@ -104,6 +104,11 @@ public class ProductService {
                 .map(ProductMapper::entityToDTO);
     }
 
+    public List<Product> getProductsByCategory(Category category) {
+        return productRepository.findByCategory(category);
+    }
 
-
+    public List<Product> getProductsByPriceRange(float minPrice, float maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice);
+    }
 }
