@@ -1,5 +1,6 @@
 package com.factoria.proyecto_final_ecom_fs.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class User {
             joinColumns = @JoinColumn(name = "productUser_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id")
     )
+    @JsonBackReference
     private Set<Product> products;
 
     public User() {

@@ -70,9 +70,8 @@ public class ProductService {
     }
 
     public void deleteProduct(int id) {
-        if (!productRepository.existsById(id)) {
+        if (!productRepository.existsById(id))
             throw new RuntimeException("Product with ID " + id + " not found");
-        }
 
         productRepository.deleteById(id);
     }
@@ -104,6 +103,12 @@ public class ProductService {
                 .map(ProductMapper::entityToDTO);
     }
 
+    public List<Product> getProductsByCategory(Category category) {
+        return productRepository.findByCategory(category);
+    }
 
-
+    public List<Product> getProductsByPriceRange(float minPrice, float maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice);
+    }
+    
 }

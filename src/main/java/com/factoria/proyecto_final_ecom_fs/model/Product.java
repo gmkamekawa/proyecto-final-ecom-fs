@@ -1,11 +1,9 @@
 package com.factoria.proyecto_final_ecom_fs.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,10 +30,11 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonIgnore
+    @JsonIgnoreProperties("products")
     private Category category;
 
     @ManyToMany(mappedBy = "products")
+    @JsonManagedReference
     private Set<User> users;
 
     public Product() {
